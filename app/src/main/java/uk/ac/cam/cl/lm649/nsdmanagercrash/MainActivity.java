@@ -21,14 +21,29 @@ public class MainActivity extends AppCompatActivity {
     public static final String SERVICE_TYPE = "_http._tcp";
     protected NsdManager nsdManager;
     private static final String TAG = "MainActivity";
+    private String myServiceName = "nameOfMyVeryCoolService";
+    private static final int HARDCODED_PORT = 51498; //this would normally be bad practice
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Log.d(TAG, "Application started");
+
         nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
+
+        registerService();
+
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, new CustomDiscoveryListener());
+    }
+
+    private void registerService() {
+        NsdServiceInfo serviceInfo  = new NsdServiceInfo();
+        serviceInfo.setServiceName(myServiceName);
+        serviceInfo.setServiceType(SERVICE_TYPE);
+        serviceInfo.setPort(HARDCODED_PORT);
+        nsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, new CustomRegistrationListener());
     }
 
     private void magic(){
@@ -81,6 +96,30 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceResolved(NsdServiceInfo serviceInfo) {
             Log.d(TAG, "onServiceResolved() "+serviceInfo);
+        }
+    }
+
+    private class CustomRegistrationListener implements NsdManager.RegistrationListener {
+
+        @Override
+        public void onServiceRegistered(NsdServiceInfo serviceInfo) {
+            Log.d(TAG, "onServiceRegistered() "+serviceInfo);
+            myServiceName = serviceInfo.getServiceName();
+        }
+
+        @Override
+        public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
+            Log.e(TAG, "onRegistrationFailed() "+serviceInfo+", "+errorCode);
+        }
+
+        @Override
+        public void onServiceUnregistered(NsdServiceInfo serviceInfo) {
+            Log.d(TAG, "onServiceUnregistered() "+serviceInfo);
+        }
+
+        @Override
+        public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
+            Log.e(TAG, "onUnregistrationFailed() "+serviceInfo+", "+errorCode);
         }
     }
 
