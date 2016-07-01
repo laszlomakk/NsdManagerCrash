@@ -34,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
         nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
 
         registerService();
-
-        nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, new CustomDiscoveryListener());
     }
 
     private void registerService() {
@@ -59,35 +57,6 @@ public class MainActivity extends AppCompatActivity {
         nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
     }
 
-    private class CustomDiscoveryListener implements NsdManager.DiscoveryListener{
-        @Override
-        public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-            Log.e(TAG, "onStartDiscoveryFailed() "+serviceType+", "+errorCode);
-        }
-        @Override
-        public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-            Log.e(TAG, "onStopDiscoveryFailed() "+serviceType+", "+errorCode);
-        }
-        @Override
-        public void onDiscoveryStarted(String serviceType){
-            Log.d(TAG, "onDiscoveryStarted(). type: "+serviceType);
-        }
-        @Override
-        public void onDiscoveryStopped(String serviceType) {
-            Log.d(TAG, "onDiscoveryStopped(). type: "+serviceType);
-        }
-        @Override
-        public void onServiceFound(final NsdServiceInfo serviceInfo) {
-            Log.d(TAG, "onServiceFound(). "+serviceInfo);
-            nsdManager.resolveService(serviceInfo, new CustomResolveListener());
-            magic();
-        }
-        @Override
-        public void onServiceLost(NsdServiceInfo serviceInfo) {
-            Log.d(TAG, "onServiceLost(). "+serviceInfo);
-        }
-    }
-
     private class CustomResolveListener implements NsdManager.ResolveListener {
         @Override
         public void onResolveFailed(final NsdServiceInfo serviceInfo, int errorCode) {
@@ -104,7 +73,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceRegistered(NsdServiceInfo serviceInfo) {
             Log.d(TAG, "onServiceRegistered() "+serviceInfo);
-            myServiceName = serviceInfo.getServiceName();
+            serviceInfo.setServiceType(SERVICE_TYPE);
+
+            magic();
+            nsdManager.resolveService(serviceInfo, new CustomResolveListener());
         }
 
         @Override
