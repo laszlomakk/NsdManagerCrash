@@ -20,13 +20,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String SERVICE_TYPE = "_http._tcp";
     protected NsdManager nsdManager;
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "NsdManagerCrash";
     private String myServiceName = "nameOfMyVeryCoolService";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         Log.d(TAG, "Application started");
 
@@ -37,7 +36,9 @@ public class MainActivity extends AppCompatActivity {
         serviceInfo.setServiceType(SERVICE_TYPE);
 
         magic();
+        Log.d(TAG, "starting a resolve");
         nsdManager.resolveService(serviceInfo, new CustomResolveListener());
+        Log.d(TAG, "Finished hacks.");
     }
 
     private void magic(){
@@ -45,11 +46,12 @@ public class MainActivity extends AppCompatActivity {
             Field f = nsdManager.getClass().getDeclaredField("mAsyncChannel");
             f.setAccessible(true);
             AsyncChannel mAsyncChannel = (AsyncChannel) f.get(nsdManager);
+            Log.d(TAG, "calling mAsyncChannel.disconnect()");
             mAsyncChannel.disconnect();
-            Log.d(TAG, "mAsyncChannel.disconnect() called");
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "asking for new NsdManager");
         nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
     }
 
