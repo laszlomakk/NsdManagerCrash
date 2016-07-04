@@ -34,11 +34,21 @@ public class MainActivity extends AppCompatActivity {
         NsdServiceInfo serviceInfo  = new NsdServiceInfo();
         serviceInfo.setServiceName(myServiceName);
         serviceInfo.setServiceType(SERVICE_TYPE);
+        serviceInfo.setPort(54873);
 
         Log.d(TAG, "calling magic()");
         magic();
-        Log.d(TAG, "starting a resolve");
-        nsdManager.resolveService(serviceInfo, new CustomResolveListener());
+        Log.d(TAG, "registering a service");
+        nsdManager.registerService(serviceInfo, NsdManager.PROTOCOL_DNS_SD, new NsdManager.RegistrationListener() {
+            @Override
+            public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {}
+            @Override
+            public void onServiceRegistered(NsdServiceInfo serviceInfo) {}
+            @Override
+            public void onServiceUnregistered(NsdServiceInfo serviceInfo) {}
+            @Override
+            public void onUnregistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {}
+        });
         Log.d(TAG, "Finished hacks.");
     }
 
@@ -51,17 +61,6 @@ public class MainActivity extends AppCompatActivity {
             mAsyncChannel.disconnect();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
-        }
-    }
-
-    private class CustomResolveListener implements NsdManager.ResolveListener {
-        @Override
-        public void onResolveFailed(final NsdServiceInfo serviceInfo, int errorCode) {
-            Log.e(TAG, "onResolveFailed() "+errorCode);
-        }
-        @Override
-        public void onServiceResolved(NsdServiceInfo serviceInfo) {
-            Log.d(TAG, "onServiceResolved() "+serviceInfo);
         }
     }
 
