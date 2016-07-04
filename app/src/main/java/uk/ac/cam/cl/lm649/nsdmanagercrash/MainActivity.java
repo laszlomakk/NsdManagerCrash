@@ -18,10 +18,8 @@ import java.lang.reflect.Field;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String SERVICE_TYPE = "_http._tcp";
     protected NsdManager nsdManager;
     private static final String TAG = "NsdManagerCrash";
-    private String myServiceName = "nameOfMyVeryCoolService";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
 
-        NsdServiceInfo serviceInfo  = new NsdServiceInfo();
-        serviceInfo.setServiceName(myServiceName);
-        serviceInfo.setServiceType(SERVICE_TYPE);
-
         Log.d(TAG, "calling magic()");
         magic();
-        Log.d(TAG, "starting a resolve");
-        nsdManager.resolveService(serviceInfo, new CustomResolveListener());
         Log.d(TAG, "Finished hacks.");
     }
 
@@ -47,21 +39,10 @@ public class MainActivity extends AppCompatActivity {
             Field f = nsdManager.getClass().getDeclaredField("mAsyncChannel");
             f.setAccessible(true);
             AsyncChannel mAsyncChannel = (AsyncChannel) f.get(nsdManager);
-            Log.d(TAG, "calling mAsyncChannel.disconnect()");
-            mAsyncChannel.disconnect();
+            Log.d(TAG, "calling mAsyncChannel.sendMessage()");
+            mAsyncChannel.sendMessage(NsdManager.NATIVE_DAEMON_EVENT);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
-        }
-    }
-
-    private class CustomResolveListener implements NsdManager.ResolveListener {
-        @Override
-        public void onResolveFailed(final NsdServiceInfo serviceInfo, int errorCode) {
-            Log.e(TAG, "onResolveFailed() "+errorCode);
-        }
-        @Override
-        public void onServiceResolved(NsdServiceInfo serviceInfo) {
-            Log.d(TAG, "onServiceResolved() "+serviceInfo);
         }
     }
 
