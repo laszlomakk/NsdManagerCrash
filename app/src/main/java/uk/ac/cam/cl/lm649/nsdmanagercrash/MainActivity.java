@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         serviceInfo.setServiceName(myServiceName);
         serviceInfo.setServiceType(SERVICE_TYPE);
 
+        Log.d(TAG, "calling magic()");
         magic();
         Log.d(TAG, "starting a resolve");
         nsdManager.resolveService(serviceInfo, new CustomResolveListener());
@@ -51,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "asking for new NsdManager");
-        nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
     }
 
     private class CustomResolveListener implements NsdManager.ResolveListener {
