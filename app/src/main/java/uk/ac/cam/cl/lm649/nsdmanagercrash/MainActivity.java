@@ -31,10 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
         nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
 
-        NsdServiceInfo serviceInfo  = new NsdServiceInfo();
-        serviceInfo.setServiceName(myServiceName);
-        serviceInfo.setServiceType(SERVICE_TYPE);
-
         Log.d(TAG, "calling magic()");
         magic();
         Log.d(TAG, "starting discovery");
@@ -50,12 +46,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {}
             @Override
-            public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                Log.d(TAG, "onStopDiscoveryFailed(). stype: "+serviceType+", +errorCode: "+errorCode);
-            }
+            public void onStopDiscoveryFailed(String serviceType, int errorCode) {}
         };
         nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
-        //nsdManager.resolveService(serviceInfo, new CustomResolveListener());
         Log.d(TAG, "Finished hacks.");
     }
 
@@ -68,17 +61,6 @@ public class MainActivity extends AppCompatActivity {
             mAsyncChannel.disconnect();
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
-        }
-    }
-
-    private class CustomResolveListener implements NsdManager.ResolveListener {
-        @Override
-        public void onResolveFailed(final NsdServiceInfo serviceInfo, int errorCode) {
-            Log.e(TAG, "onResolveFailed() "+errorCode);
-        }
-        @Override
-        public void onServiceResolved(NsdServiceInfo serviceInfo) {
-            Log.d(TAG, "onServiceResolved() "+serviceInfo);
         }
     }
 
