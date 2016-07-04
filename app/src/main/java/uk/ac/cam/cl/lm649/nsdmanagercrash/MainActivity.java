@@ -37,8 +37,25 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "calling magic()");
         magic();
-        Log.d(TAG, "starting a resolve");
-        nsdManager.resolveService(serviceInfo, new CustomResolveListener());
+        Log.d(TAG, "starting discovery");
+        NsdManager.DiscoveryListener discoveryListener = new NsdManager.DiscoveryListener() {
+            @Override
+            public void onDiscoveryStarted(String serviceType) {}
+            @Override
+            public void onDiscoveryStopped(String serviceType) {}
+            @Override
+            public void onServiceFound(NsdServiceInfo serviceInfo) {}
+            @Override
+            public void onServiceLost(NsdServiceInfo serviceInfo) {}
+            @Override
+            public void onStartDiscoveryFailed(String serviceType, int errorCode) {}
+            @Override
+            public void onStopDiscoveryFailed(String serviceType, int errorCode) {
+                Log.d(TAG, "onStopDiscoveryFailed(). stype: "+serviceType+", +errorCode: "+errorCode);
+            }
+        };
+        nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, discoveryListener);
+        //nsdManager.resolveService(serviceInfo, new CustomResolveListener());
         Log.d(TAG, "Finished hacks.");
     }
 
