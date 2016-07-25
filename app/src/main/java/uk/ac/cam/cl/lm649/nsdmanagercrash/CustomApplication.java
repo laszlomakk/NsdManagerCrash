@@ -1,30 +1,23 @@
-/**
- Copyright (C) 2016 Laszlo Makk
- This project is licensed under the Apache 2.0 License
- */
-
 package uk.ac.cam.cl.lm649.nsdmanagercrash;
 
+import android.app.Application;
 import android.content.Context;
 import android.net.nsd.NsdManager;
-import android.net.nsd.NsdServiceInfo;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.android.internal.util.AsyncChannel;
 
 import java.lang.reflect.Field;
 
-public class MainActivity extends AppCompatActivity {
+public class CustomApplication extends Application {
+
+    private final static String TAG = "CustomApplication";
 
     protected NsdManager nsdManager;
-    private static final String TAG = "NsdManagerCrash";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void onCreate() {
+        super.onCreate();
         Log.d(TAG, "Application started");
 
         nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
