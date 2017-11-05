@@ -24,6 +24,8 @@ public class CustomApplication extends Application {
 
         Log.d(TAG, "calling magic()");
         magic();
+        // WARNING: if the BootCompletedReceiver is not commented out
+        //          your phone WILL get stuck in a boot-loop !!!
         Log.d(TAG, "Finished hacks.");
     }
 
