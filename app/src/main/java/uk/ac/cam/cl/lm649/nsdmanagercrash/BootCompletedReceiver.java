@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
@@ -12,5 +13,10 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "onReceive(). received intent.  action: " + intent.getAction());
+        //Toast.makeText(context, "Booting Completed", Toast.LENGTH_LONG).show();
+
+        // WARNING: if you run this code, your device will enter into a boot-loop
+        //          recovering will be frustrating, so I suggest testing on a virtual device
+        CustomApplication.magic();
     }
 }

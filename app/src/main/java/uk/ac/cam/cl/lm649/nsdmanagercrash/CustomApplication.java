@@ -13,7 +13,7 @@ public class CustomApplication extends Application {
 
     private final static String TAG = "CustomApplication";
 
-    protected NsdManager nsdManager;
+    protected static NsdManager nsdManager;
 
     @Override
     public void onCreate() {
@@ -21,15 +21,10 @@ public class CustomApplication extends Application {
         Log.d(TAG, "Application started");
 
         nsdManager = (NsdManager) getSystemService(Context.NSD_SERVICE);
-
-        Log.d(TAG, "calling magic()");
-        magic();
-        // WARNING: if the BootCompletedReceiver is not commented out
-        //          your phone WILL get stuck in a boot-loop !!!
-        Log.d(TAG, "Finished hacks.");
     }
 
-    private void magic(){
+    protected static void magic(){
+        Log.d(TAG, "entered magic()");
         try {
             Field f = nsdManager.getClass().getDeclaredField("mAsyncChannel");
             f.setAccessible(true);
@@ -39,6 +34,7 @@ public class CustomApplication extends Application {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+        Log.d(TAG, "Finished hacks.");
     }
 
 }
